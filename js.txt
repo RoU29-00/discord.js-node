@@ -1,0 +1,21 @@
+-----日本語-----
+
+discord.jsを使ったdiscord botについて質問です。
+
+const client = new Discord.Client();
+
+client.on('message', message => {});
+
+この形式でメッセージを取得する際、
+メッセージ取得(client.on)を停止する方法またはコマンドはありますか？
+
+-----English-----
+
+I have a question about "discord bot" with "discord.js".
+
+const client = new Discord.Client();
+
+client.on('message', message => {});
+
+When retrieving messages in this format, 
+Is there a way or command to stop message retrieval(client.on)?
