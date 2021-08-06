@@ -1,21 +1,13 @@
------日本語-----
+if (String(message.content).slice(0,3) === "!人狼" || String(message.content).slice(0,3) === "！人狼"){
+                Werewolfcount = parseInt(String(message.content).slice(3))
+                console.log("人狼"+String(message.content).slice(3))
+                message.channel.send("人狼の人数を"+String(Werewolfcount)+"に設定しました")
+                return;
+        }
+        if (String(message.content).slice(0,2) === "!村人" || String(message.content).slice(0,2) === "！村人"){
+                Villagercount = parseInt(String(message.content).slice(3))
+                console.log("村人"+String(message.content).slice(3))
+                message.channel.send("村人の人数を"+String(Villagercount)+"に設定しました")
+                return;
 
-discord.jsを使ったdiscord botについて質問です。
-
-const client = new Discord.Client();
-
-client.on('message', message => {});
-
-この形式でメッセージを取得する際、
-メッセージ取得(client.on)を停止する方法またはコマンドはありますか？
-
------English-----
-
-I have a question about "discord bot" with "discord.js".
-
-const client = new Discord.Client();
-
-client.on('message', message => {});
-
-When retrieving messages in this format, 
-Is there a way or command to stop message retrieval(client.on)?
+        }
