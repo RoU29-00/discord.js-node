@@ -131,16 +131,16 @@ client.on('message', message => {
                         console.log("村人"+String(message.content).slice(3))
                         message.channel.send("村人の人数を"+String(Villagercount)+"に設定しました")
                         return;
-        }
+                }
         
 
+        };
 
 
 
-};
+
 });
-
-
+};
 
 
 
