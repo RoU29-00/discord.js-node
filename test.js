@@ -5,24 +5,15 @@ function test(){
     
     if((document.getElementById("test1").value === "test") && (testplan) ){
         console.log("test in value")
-        testplan = false
-        console.log("here text is true")
+        let subresultnum = Math.floor( Math.random() * 1+1)
+        console.log(subresultnum)
     }
 }
 
-function unique(list) {
-    var result = [];
-    $.each(list, function(i, e) {
-      if ($.inArray(e, result) == -1) result.Push(e);
-    });
-    return result;
-  }
 
-let a =["aw","add","ef","erhg","aw","add"]
+let Astro = Object.keys(obj).filter( (key) => { 
+  for(let a =0;a<memberList;a++)
+  Object.keys(memberList).forEach(key => {return obj[key] === memberList[a]})});
+Mrg += "@" + Astro
+console.log(Mrg)
 
-let theliat = ["aw","add","ef","erhg","aw","add"]
-
-theliat = theliat.filter(
-    function(a){if (!this[a]) {this[a] = 1; return a;}},
-    {}
-   );
