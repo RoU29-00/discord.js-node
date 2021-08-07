@@ -8,16 +8,29 @@ const client = new Discord.Client();
 
 
 function randomChoice(arr) {
-        let A = Math.floor(Math.random() * arr.length);
-        let B = arr[A];
-        arr.slice(A,1);
-        return B;
-      }
+let A = Math.floor(Math.random() * arr.length);
+let B = arr[A];
+arr.splice(A,1);
+return B;
+}
 function Atoa(str) {
-        return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
             return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-        });
-    };
+});
+};
+
+function addressListToName(list){
+let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
+let result=[];
+for(l of list){
+        for(key in memberList){
+                if(String(l) === String(memberList[key])){
+                                result.push(key);
+                };
+        };     
+};
+return result;
+};
 
 
 
@@ -72,6 +85,7 @@ let master ="812608069128159233"
 
 let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
 let getMember = [];
+let alwaysGetMember =["as"];
 let Werewolfcount =0;
 let Villagercount =0;
 let allcount =0;
@@ -131,7 +145,13 @@ client.on('message', message => {
         };
 
         if((String(message.content) === "?登録完了" || String(message.content) === "？登録完了") && rollfase){
+                allcount = Villagercount+Werewolfcount;
+                if(allcount!== getMember.length){
+                        message.channel.send("Error：参加人数と役職人数が一致していません。")
+                        return;
+                }
                 message.channel.send("登録受付を終了しました")
+                alwaysGetMember = getMember.slice(0,getMember.length)
                 rollfase = false;
                 beforestart =true;
                 rollfaseintro = false;
@@ -142,14 +162,14 @@ client.on('message', message => {
 
                 if(String(message.content).slice(1,3) === "人狼"){
                         Werewolfcount = parseInt(Atoa(String(message.content).slice(3)))
-                        console.log("人狼"+String(message.content).slice(3))
+                        console.log("人狼数："+String(message.content).slice(3))
                         message.channel.send("人狼の人数を"+String(Werewolfcount)+"に設定しました")
                         return;   
                 }
 
                 if (String(message.content).slice(1,3) === "村人" ){
                         Villagercount = parseInt(Atoa(String(message.content).slice(3)))
-                        console.log("村人"+String(message.content).slice(3))
+                        console.log("村人数："+String(message.content).slice(3))
                         message.channel.send("村人の人数を"+String(Villagercount)+"に設定しました")
                         return;
                 }
@@ -161,10 +181,9 @@ client.on('message', message => {
         //スタート前準備
         if(beforestart){
 
-                allcount = Villagercount+Werewolfcount;
                 console.log("beforestart is starting");
-                console.log(Werewolfcount);
-                console.log(Villagercount);
+                console.log("人狼数：" + Werewolfcount);
+                console.log("村人数：" + Villagercount);
                 //人物役職配布
                 for(let i = 0 ; i<Werewolfcount ;i++){
                         console.log("人狼配布開始");
@@ -177,35 +196,33 @@ client.on('message', message => {
                         console.log("配布：村人\""+Villager+"\"");
                 }
                 console.log("----------------配布完了----------------")
-                console.log("人狼："+String(Werewolf));
-                console.log("村人："+String(Villager));
+                console.log("人狼：" + Werewolf);
+                console.log("村人：" + Villager);
                 
                 //DMに対象役職を送信
                 for(let i = 0 ; i<allcount ; i++){
-                        let ID = client.users.cache.get(getMember[i])
-                        console.log(ID)
-                        for(g in getMember){
-                                if(Werewolf.indexOf(getMember[g]) !== -1){
-                                        ID.send("あなたの役職は人狼です")
+                        let ID = client.users.cache.get(alwaysGetMember[i])
+                                if(Werewolf.indexOf(alwaysGetMember[i]) !== -1){
+                                        console.log("werewolf"+Werewolf)
+                                        console.log(addressListToName(Werewolf))
+                                        ID.send("あなたの役職は人狼です\n----------------------\n"+addressListToName(Werewolf)+"\n----------------------\n以上"+Werewolfcount+"名が仲間です。")
                                         console.log(String(ID)+"に送信")
-                                }else if(Villager.indexOf(getMember[g]) !== -1){
+                                }else if(Villager.indexOf(alwaysGetMember[i]) !== -1){
                                         ID.send("あなたの役職は村人です")
                                         console.log(String(ID)+"に送信")
                                 };
-                        };
 
                 };
-                message.channel.send("参加メンバー全員にそれぞれの役職を送信しました\nこれより下記設定で人狼を開始します\n準備が完了した場合、「!はい」と入力してください。\n「!いいえ」と入力すると一度人狼プログラムが閉じ\n最初からやり直すことができます")
-                message.channel.send("設定項目\n--------------------------\n人狼数："+Werewolfcount+"人"+"\n村人数："+Villagercount+"人"+"\n参加メンバー："+String(getMember.length)+"人")
                 let Mrg =" "
-                for(let i = 0 ; i<getMember.length ; i++){
+                for(let i = 0 ; i<alwaysGetMember.length ; i++){
                         for(key in memberList){
-                                if (memberList[key] === getMember[i]){
-                                        Mrg += "<@" + getMember[i] +">"
+                                if (memberList[key] === alwaysGetMember[i]){
+                                        Mrg += "<@" + alwaysGetMember[i] +">"
                                 };
                         };
                 };
-                message.channel.send(Mrg);
+                message.channel.send("参加メンバー全員にそれぞれの役職を送信しました\nこれより下記設定で人狼を開始します\n準備が完了した場合、「!はい」と入力してください。\n「!いいえ」と入力すると一度人狼プログラムが閉じ\n最初からやり直すことができます")
+                message.channel.send("設定項目\n--------------------------\n人狼数："+Werewolfcount+"人"+"\n村人数："+Villagercount+"人"+"\n参加メンバー："+String(getMember.length)+"人\n"+Mrg+"\n通信プロトコル状態：true\n--------------------------")
 
                 beforestart = false;
                 beforestart2 = true;
