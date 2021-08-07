@@ -2,41 +2,56 @@
 const Discord = require('discord.js');
 // 新しいDiscordクライアントを作成
 const client = new Discord.Client();
-// クライアントの準備ができた際に実行されます
-// このイベントはログインした後に１度だけ実行します
 
-
-
+//リストの中からランダムに取り出して消す
 function randomChoice(arr) {
-let A = Math.floor(Math.random() * arr.length);
-let B = arr[A];
-arr.splice(A,1);
-return B;
+        let A = Math.floor(Math.random() * arr.length);
+        let B = arr[A];
+        arr.splice(A,1);
+        return B;
 }
+
+//全角を半角に直す
 function Atoa(str) {
-return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
 });
 };
 
+////与えられた職業の中の人の名前を返す
 function addressListToName(list){
-let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
-let result=[];
-for(l of list){
-        for(key in memberList){
-                if(String(l) === String(memberList[key])){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
+        let result=[];
+        for(l of list){
+                for(key in memberList){
+                        if(String(l) === String(memberList[key])){
                                 result.push(key);
+                        };
+                };     
+        };
+        return result;
+};
+
+//与えられた職業の中にいるかいないかreturn bool
+function knowboolIs(list){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
+        for(l of list){
+                for(key in memberList){
+                        if(String(l) === String(memberList[key])){
+                                return true
+                        };
                 };
-        };     
+        };
+        return false
+        
 };
-return result;
-};
 
 
-
+//一回だけ行う
 client.once('ready', () => {
 	console.log('準備完了！');
 });
+
 
 let master ="812608069128159233"
 let startButton = true;
@@ -82,7 +97,6 @@ function WereWolf(Msg){
 console.log("関数読み込み開始")
 
 let master ="812608069128159233"
-
 let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
 let getMember = [];
 let alwaysGetMember =["as"];
