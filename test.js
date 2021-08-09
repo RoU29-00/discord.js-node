@@ -56,3 +56,5 @@ class GetMemberData {
 };
 
 let V = new GetMemberData("1234","Rou","black","werewolf",0)
+
+eval("var " + String(V.name) + "= new GetMemberData(\"1234\",\"Rou\",\"black\",\"werewolf\",0)");
