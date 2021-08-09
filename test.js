@@ -44,4 +44,15 @@ function addressListToName(list){
  return result;
 };
 
-console.log(addressListToName(getMember))
+class GetMemberData {
+        constructor(address,name,blackOrWhite,roll,count){
+                this.address = address;
+                this.name = name;
+                this.blackOrWhite = blackOrWhite;
+                this.roll = roll;
+                this.count = count;
+                
+        };
+};
+
+let V = new GetMemberData("1234","Rou","black","werewolf",0)

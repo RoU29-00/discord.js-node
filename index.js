@@ -3,6 +3,20 @@ const Discord = require('discord.js');
 // 新しいDiscordクライアントを作成
 const client = new Discord.Client();
 
+//人物定義
+class GetMemberData {
+        constructor(address,name,blackOrWhite,roll,count){
+                this.address = address;
+                this.name = name;
+                this.blackOrWhite = blackOrWhite;
+                this.roll = roll;
+                this.count = count;
+                
+        };
+
+};
+
+
 //リストの中からランダムに取り出して消す
 function randomChoice(arr) {
         let A = Math.floor(Math.random() * arr.length);
@@ -46,6 +60,15 @@ function knowboolIs(list){
         
 };
 
+function AddressToName(Address){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
+        for(key in memberList){
+                if(address === memberList[key]){
+                        return key
+                }
+        }
+}
+
 
 //一回だけ行う
 client.once('ready', () => {
@@ -68,6 +91,7 @@ client.on('message', message => {
                 message.channel.send("強制停止を実行\nシステム監査を実行\nシステム自動復旧までのこり15分")
                 process.exit();
             }
+        
 
 	if (message.content === 'test' && startButton) {
                 
@@ -96,16 +120,18 @@ function WereWolf(Msg){
         
 console.log("関数読み込み開始")
 
-let master ="812608069128159233"
-let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
+var master ="812608069128159233"
+var memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
 let getMember = [];
-let alwaysGetMember =["as"];
-let Werewolfcount =0;
-let Villagercount =0;
-let allcount =0;
-let Werewolf =[];
-let Villager =[];
+var alwaysGetMember =[];
+var alwaysGetMemberName = [];
+var Werewolfcount =0;
+var Villagercount =0;
+var allcount =0;
+var Werewolf =[];
+var Villager =[];
 let setting = 0;
+let day = 0;
 
 //スイッチ式if文bool
 let startfase = true
@@ -113,12 +139,16 @@ let rollfaseintro =false
 let rollfase = false
 let beforestart = false
 let beforestart2 = false
+let dayfase = false
+let dayfaseintro = false
+let night_vote = false
+let lifttime = false
 console.log("設定読み込み完了")
 
 //設定フェーズ
 
 //メンバー登録
-Msg.channel.send("人狼に参加するメンバーを「!人物名」のように発言してください\n------------------\nExample/人物名=> ロウ ならば!ロウと入力\n------------------\n人物登録が全員完了したら「?登録完了」と発言してください\n**注意！一回送ったら２回目は送らないでください**")
+Msg.channel.send("人狼に参加するメンバーを「!人物名」のように発言してください\n------------------\nExample/人物名=> ロウ ならば!ロウと入力\n------------------\n人物登録が全員完了したら「?登録完了」と発言してください\n**注意！一回送ったら２回目は送らないでください\nまた、参加者上限は10人までです**")
 
 client.on('message', message => {
         if(message.author.bot){return;}
@@ -186,8 +216,7 @@ client.on('message', message => {
                         console.log("村人数："+String(message.content).slice(3))
                         message.channel.send("村人の人数を"+String(Villagercount)+"に設定しました")
                         return;
-                }
-        
+                };
 
         };
 
@@ -199,14 +228,19 @@ client.on('message', message => {
                 console.log("人狼数：" + Werewolfcount);
                 console.log("村人数：" + Villagercount);
                 //人物役職配布
-                for(let i = 0 ; i<Werewolfcount ;i++){
+                for(var GrobalImpass = 0 ; i<Werewolfcount ;GrobalImpass ++){
                         console.log("人狼配布開始");
-                        Werewolf.push(randomChoice(getMember))
+                        let address = randomChoice(getMember)
+                        let ralco = new GetMemberData(address,AddressToName(address),"黒",0)
+                        elal("var member"+ralco.name) = ralco
+                        Werewolf.push(address)
                         console.log("配布：人狼\""+Werewolf+"\"");
                 }
-                for(let i = 0 ; i<Villagercount ; i++){
+                for(GrobalImpass++ ; GrobalImpass<Villagercount+GrobalImpass ; GrobalImpass++){
                         console.log("村人配布開始");
-                        Villager.push(randomChoice(getMember))
+                        let address =randomChoice(getMember)
+                        elal("member"+GrobalImpass) = new GetMemberData(address,AddressToName(address),"黒",0)
+                        Villager.push(address)
                         console.log("配布：村人\""+Villager+"\"");
                 }
                 console.log("----------------配布完了----------------")
@@ -219,10 +253,10 @@ client.on('message', message => {
                                 if(Werewolf.indexOf(alwaysGetMember[i]) !== -1){
                                         console.log("werewolf"+Werewolf)
                                         console.log(addressListToName(Werewolf))
-                                        ID.send("あなたの役職は人狼です\n----------------------\n"+addressListToName(Werewolf)+"\n----------------------\n以上"+Werewolfcount+"名が仲間です。")
+                                        client.users.cache.get(alwaysGetMember[i]).send("あなたの役職は人狼です\n----------------------\n"+addressListToName(Werewolf)+"\n----------------------\n以上"+Werewolfcount+"名が仲間です。")
                                         console.log(String(ID)+"に送信")
                                 }else if(Villager.indexOf(alwaysGetMember[i]) !== -1){
-                                        ID.send("あなたの役職は村人です")
+                                        client.users.cache.get(alwaysGetMember[i]).send("あなたの役職は村人です")
                                         console.log(String(ID)+"に送信")
                                 };
 
@@ -244,8 +278,9 @@ client.on('message', message => {
 
         if(beforestart2){
                 if(String(message.content) === "!はい" || String(message.content) === "！はい"){
-                        message.channel.send("人狼を開始します")
+                        message.channel.send("人狼を開始します");
                         beforestart2 = false;
+                        dayfase = true;
                         return;
                 };
 
@@ -259,12 +294,38 @@ client.on('message', message => {
                 };
         };
 
+        if(dayfase){
+                day++
+                message.channel.send("第" + day + "日目が始まりました。\n制限時間5分以内に\n村の中から吊り上げる断罪者を決めてください")
+                setTimeout(function(){
+                        dayfase = false
+                        night_vote =true 
+                },5*60*1000)
+        };
+        if(night_vote){
+                let Mas = 0;
+                message.channel.send("あたりが暗くなり、夜がやってきました。\n多数決により断罪者を決めます\nDMにて「！ロウ」のように入力してください。\n**注意！一回送ったら２回目は送らないでください**\n**バグが発生する危険性があります。**")
+                dmsend =true
+                if((String(message.content).startsWith("!") || String(message.content).startsWith("！"))){
+                        eval(String(message.content).slice(1)).count++
+                        Mas++
+                        if(Mas === alwaysGetMember.length){
+                                message.channel.send("全員投票完了しました。投票結果を開示します")
+                                night_vote = false
+                                lifttime = true
+                                
+                        };
+                };
 
+        };
+        if(lifttime){
+                console.log("perfect!")
 
-
+        };
 
 });
 };
+
 
 // トークンを使ってDiscordにログイン
 client.login('ODcwNzE3NzczMzg1NDM3MjU2.YQQ1Hg.6WJWC_7Fw5gDmQ6vCht-yqTa6nw');
