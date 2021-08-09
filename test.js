@@ -2,6 +2,7 @@ let testplan = true
 
 function test(){
     console.log(document.getElementById("test1").value)
+    B = 12;
     
     if((document.getElementById("test1").value === "test") && (testplan) ){
         console.log("test in value")
@@ -58,3 +59,29 @@ class GetMemberData {
 let V = new GetMemberData("1234","Rou","black","werewolf",0)
 
 eval("var " + String(V.name) + "= new GetMemberData(\"1234\",\"Rou\",\"black\",\"werewolf\",0)");
+
+
+function f(){
+	x = 0; // グローバル変数
+	//console.log(x);
+}
+function g(){
+	//console.log(x);
+}
+function F(){
+        a = 0;
+}
+ //0
+g(); //0
+
+
+function addressListToName(str){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"}
+                for(key in memberList){
+                        if(String(str) === String(memberList[key])){
+                                return String(key);
+                        };
+                };     
+};
+
+console.log(addressListToName("812608069128159233"))
