@@ -46,14 +46,16 @@ function addressListToName(list){
 };
 
 class GetMemberData {
-        constructor(address,name,blackOrWhite,roll,count){
+        constructor(address,name,blackOrWhite,roll,count,deathOrLife){
                 this.address = address;
                 this.name = name;
                 this.blackOrWhite = blackOrWhite;
                 this.roll = roll;
                 this.count = count;
+                this.deathOrLife = deathOrLife
                 
         };
+
 };
 
 let V = new GetMemberData("1234","Rou","black","werewolf",0)
@@ -84,4 +86,65 @@ function addressListToName(str){
                 };     
 };
 
-console.log(addressListToName("812608069128159233"))
+
+ロウ_member = new GetMemberData("812608069128159233","ロウ","黒","WereWolf",1,"生存")
+しおん_member = new GetMemberData("524907316269678622","しおん","黒","WereWolf",3,"生存")
+Uki_member = new GetMemberData("814890074185007104","Uki","黒","WereWolf",2,"生存")
+miho_member = new GetMemberData("814826300770484244","miho","黒","WereWolf",10,"生存")
+function returnManyVotedName(){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"};
+        result = "";
+        Count = 0;
+                for(key in memberList){
+                        try{
+                                let count = eval(key + "_member" + ".count");
+                        if(count > Count){
+                                Count = count;
+                                result = eval(key + "_member" + ".name");
+                        };
+                        
+                        }catch{
+
+                        };
+                };
+                return result;
+
+};
+const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// ビジーwaitを使う方法
+function sleep(waitMsec) {
+        var startMsec = new Date();
+       
+        // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+        while (new Date() - startMsec < waitMsec);
+}
+       
+
+
+function addressListToNameStr(str){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"};
+                for(key in memberList){
+                        if(str === memberList[key]){
+                                //console.log(key)
+                                return String(key);
+                        };
+                };     
+};
+
+alwaysGetMember = ["812608069128159233","524907316269678622"]
+
+let Result = "----------------------\n";
+                for(m of alwaysGetMember){
+                        let B =addressListToNameStr(m)
+                        let C = eval( String(B) + "_member.address");
+                        let A = eval( String(B) + "_member.name");
+                        Result += A + "：" + C + "\n"
+                        A = eval( String(B) + "_member.roll");
+                        Result += "役職：" + A + "\n"
+                        A = eval( String(B) + "_member.deathOrLife");
+                        Result += "生存判定：" + A + "\n"
+                };
+                Result += "----------------------";
+
+console.log(Result)

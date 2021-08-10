@@ -5,16 +5,27 @@ const client = new Discord.Client();
 
 //人物定義
 class GetMemberData {
-        constructor(address,name,blackOrWhite,roll,count){
+        constructor(address,name,blackOrWhite,roll,count,deathOrLife){
                 this.address = address;
                 this.name = name;
                 this.blackOrWhite = blackOrWhite;
                 this.roll = roll;
                 this.count = count;
+                this.deathOrLife = deathOrLife
                 
         };
 
 };
+
+//まつ
+function sleep(waitMsec) {
+        var startMsec = new Date();
+       
+        // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+        while (new Date() - startMsec < waitMsec);
+}
+
+
 
 
 //リストの中からランダムに取り出して消す
@@ -75,8 +86,42 @@ function AddressToName(Address){
         for(key in memberList){
                 if(Address === memberList[key]){
                         return key;
-                }
-        }
+                };
+        };
+};
+function returnManyVotedName(){
+        let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"};
+        result = "";
+        Count = 0;
+                for(key in memberList){
+                        try{
+                                let count = eval(key + "_member" + ".count");
+                        if(count > Count){
+                                Count = count;
+                                 result = eval(key + "_member" + ".name");
+                        };
+                        
+                        }catch{
+
+                        };
+                };
+
+                return result;
+
+
+
+};
+
+function endbool(){
+        startfase = false;
+        rollfaseintro =false;
+        rollfase = false;
+        beforestart = false;
+        beforestart2 = false;
+        dayfase = false;
+        night_vote = false;
+        judgement = false;
+        day_night = false;
 }
 
 
@@ -90,7 +135,7 @@ let master ="812608069128159233"
 let startButton = true;
 let dmsend = false;
 let botread = false;
-
+let startchannel = "";
 
 
 client.on('message', message => {
@@ -99,7 +144,7 @@ client.on('message', message => {
                 message.channel.send(message.channel.type);
         }
 
-        else if(message.author.bot && botread){return;}
+        else if(message.author.bot && botread === false){return;}
         else if(message.channel.type === "dm" && dmsend === false){return;};
 
         if (message.content.startsWith('Forced stop')) {
@@ -113,6 +158,9 @@ client.on('message', message => {
                 message.channel.send("人狼が呼び込まれました")
 
                 WereWolf(message);
+
+                startchannel = message.channel;
+                console.log(startchannel)
 
                 startButton = false;
 
@@ -147,6 +195,7 @@ var Werewolf =[];
 var Villager =[];
 let setting = 0;
 let day = 0;
+let werewolfkill = "";
 
 //スイッチ式if文bool
 let startfase = true;
@@ -155,10 +204,58 @@ let rollfase = false;
 let beforestart = false;
 let beforestart2 = false;
 let dayfase = false;
-let dayfaseintro = false;
 let night_vote = false;
-let lifttime = false;
+let judgement = false;
+let day_night = false;
 console.log("設定読み込み完了");
+
+
+function deleteroll(address){
+        for(w of Werewolf){
+                if(w === address){
+                        Werewolf.splice(Werewolf.indexOf(address),1)
+                        Werewolfcount--
+                };
+        };
+        for(v of Villager){
+                if(v === address){
+                        Villager.splice(Villager.indexOf(address),1)
+                        Villagercount--
+                };
+        };
+
+};
+
+function judgement(){
+        let Result = "----------------------\n";
+        for(m of alwaysGetMember){
+                let B =addressListToNameStr(m)
+                let C = eval( String(B) + "_member.address");
+                let A = eval( String(B) + "_member.name");
+                Result += A + "：" + C + "\n"
+                A = eval( String(B) + "_member.roll");
+                Result += "役職：" + A + "\n"
+                A = eval( String(B) + "_member.deathOrLife");
+                Result += "生存判定：" + A + "\n"
+        };
+        Result += "----------------------";
+        if(Villagercount = Werewolfcount){
+                startchannel.send("人狼の数と村人の数が同じになったため人狼の勝利です！！");
+                startchannel.send(Result)
+                endbool()
+        }else if(Werewolfcount === 0){
+                startchannel.send("村の中から人狼が消滅したため、村人の勝利です！！");
+                startchannel.send(Result)
+                endbool()
+        }else{
+                judgement = false;
+                day_night = true;
+        }
+
+};
+
+
+
 
 //設定フェーズ
 
@@ -245,7 +342,7 @@ client.on('message', message => {
                 for(var GrobalImpass = 0 ; GrobalImpass<Werewolfcount ;GrobalImpass ++){
                         console.log("人狼配布開始");
                         let address = randomChoice(getMember);
-                        let ralco = new GetMemberData(address,AddressToName(address),"黒","Werewolf",0);
+                        let ralco = new GetMemberData(address,AddressToName(address),"黒","Werewolf",0,"生存");
                         eval(String(ralco.name) + "_member" + " = " + "ralco");
                         console.log("------------");
                         console.log(ralco);
@@ -255,7 +352,7 @@ client.on('message', message => {
                 for(GrobalImpass++ ; GrobalImpass<Villagercount+GrobalImpass ; GrobalImpass++){
                         console.log("村人配布開始");
                         let address = randomChoice(getMember)
-                        let ralco = new GetMemberData(address,AddressToName(address),"白","Villager",0);
+                        let ralco = new GetMemberData(address,AddressToName(address),"白","Villager",0,"生存");
                         console.log("------------");
                         console.log(ralco);
                         Werewolf.push(address);
@@ -309,39 +406,75 @@ client.on('message', message => {
         if(dayfase){
                 day++
                 dayfase = false;
-                message.channel.send("第" + day + "日目が始まりました。\n制限時間5分以内に\n村の中から吊り上げる断罪者を決めてください");
+                message.channel.send("第" + day + "日目が始まりました。");D
+                if(day > 1){
+                        startchannel.send("先日は人狼によって" + werewolfkill + "が殺されました");
+                };
+                startchannel.send("制限時間5分以内に\n村の中から吊り上げる断罪者を決めてください");
                 setTimeout(function(){
                         botread = true;
                         message.channel.send("あたりが暗くなり、夜がやってきました。\n多数決により断罪者を決めます\nDMにて「！ロウ」のように入力してください。\n**注意！一回送ったら２回目は送らないでください**\n**バグが発生する危険性があります。**");
                         night_vote =true;
                         botread = false;
-                },1*5*1000);
+                },1*20*1000);
         };
         if(night_vote){
                 let Mas = 0;
                 dmsend =true;
                 if((String(message.content).startsWith("!") || String(message.content).startsWith("！"))){
-                        eval(String(message.content).slice(1)+ "_member" + ".count++")
+                        try{eval(String(message.content).slice(1)+ "_member" + ".count++")
                         message.channel.send(String(message.content).slice(1) + "の投票を受付ました。")
                         console.log("人物名：" + eval(String(message.content).slice(1)+ "_member" + ".name") +"に"+ eval(String(message.content).slice(1)+ "_member" + ".count") + "投票されました");
                         Mas++
+                        }catch{
+                                message.channel.send("対象外です")
+                                return;
+                        };
                         if(Mas === alwaysGetMember.length){
-                                let Allcontent = "";
+                                
+                                let Allcontent = "\n------------------";
                                 for(address of alwaysGetMember){
-                                        Allcontent += "\n" + eval(addressListToNameStr(address) + "_member" + ".name") + "：" + eval(addressListToNameStr(address) + "_member" + ".count");
+                                        Allcontent += "\n" + eval(addressListToNameStr(address) + "_member" + ".name") + "：" + eval(addressListToNameStr(address) + "_member" + ".count") + "票";
                                 };
                                 console.log("---------------人物評価完了---------------");
-                                message.channel.send("全員投票完了しました。投票結果を開示します" + Allcontent);
-                                night_vote = false;
-                                lifttime = true;
+                                startchannel.send("全員投票完了しました。投票結果を開示します" + Allcontent + "\n------------------");
+                                dmsend = false;
+                                startchannel.send(returnManyVotedName() + "さん\n30秒で遺言をどうぞ");
+                                setTimeout(function(){
+                                        night_vote = false;
+                                        botread = true;
+                                        startchannel.send("遺言時間終了\nこれ以降死者として不用意な発言はやめてください")
+                                        deleteroll(eval(returnManyVotedName() + "_member" + ".address"));
+                                        eval(returnManyVotedName() + "_member" + ".deathOrLife" + "= '死亡'");
+                                        judgement = true;
+                                        botread = false;
+                                        day_night = true;
+                                        judgement()
+                                        startchannel.send("続行します\nなにか入力してください。")
+                                },20*1000);
+                                
                         };
 
                 };
 
         };
-        if(lifttime){
-                console.log("perfect!");
-
+        
+        if(day_night){
+                message.channel.send("第" + day + "日目の夜がやってきました\n" + "夜行動を選択してください\n「!ロウ」のように選択してください")
+                dmsend = true;
+                let endpoint =0;
+                for(w of Werewolf){
+                        if(message.author.id === w){
+                                eval(String(message.content).slice(1)+ "_member" + ".deathOrLife" + " = " + "'死亡'")
+                                message.channel.send("死亡選択を受け付けました")
+                                endpoint++;
+                                werewolfkill = eval(String(message.content).slice(1)+ "_member" + ".name")
+                };
+                };
+                if(endpoint === Werewolf){
+                        dmsend = false;
+                        console.log("パーフェクト")
+                };
         };
 
 });
