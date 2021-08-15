@@ -146,8 +146,10 @@ client.on('message', message => {
         }
 
         else if(message.author.bot && botread === false){return;}
-        else if(message.channel.type === "dm" && dmsend === false){return;}
-        else if(message.channel.type === "text" && channelsend === false){return;};
+        else if(message.channel.type === "dm" && dmsend === false){console.log("DM送信を防止")
+                return;}
+        else if(message.channel.type === "text" && channelsend === false){console.log("チャンネル送信を防止")
+                return;};
 
         if (message.content.startsWith('Forced stop')) {
                 if (!message.author.id === master) return;
@@ -162,7 +164,6 @@ client.on('message', message => {
                 WereWolf(message);
 
                 startchannel = message.channel;
-                console.log(startchannel)
 
                 startButton = false;
 
