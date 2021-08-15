@@ -283,6 +283,19 @@ function judgement(){
 Msg.channel.send("人狼に参加するメンバーを「!人物名」のように発言してください\n------------------\nExample/人物名=> ロウ ならば!ロウと入力\n------------------\n人物登録が全員完了したら「?登録完了」と発言してください\n**注意！一回送ったら２回目は送らないでください\nまた、参加者上限は10人までです**");
 
 client.on('message', message => {
+
+        if(message.author.bot && botread === false){return;}
+        else if(message.channel.type === "dm" && dmsend === false){console.log("DM送信を防止")
+                return;}
+        else if(message.channel.type === "text" && channelsend === false){console.log("チャンネル送信を防止")
+                return;};
+
+        if (message.content.startsWith('Forced stop')) {
+                if (!message.author.id === master) return;
+                message.channel.send("強制停止を実行\nシステム監査を実行\nシステム自動復旧までのこり15分");
+                process.exit();
+        };
+
         if(message.author.bot){return;}
 
         console.log("Client is on and on "+setting);
