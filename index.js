@@ -120,7 +120,7 @@ function endbool(){
         beforestart2 = false;
         dayfase = false;
         night_vote = false;
-        judgement = false;
+        judgements = false;
         day_night = false;
 }
 
@@ -134,6 +134,7 @@ client.once('ready', () => {
 let master ="812608069128159233"
 let startButton = true;
 let dmsend = false;
+let channelsend = true;
 let botread = false;
 let startchannel = "";
 
@@ -145,7 +146,8 @@ client.on('message', message => {
         }
 
         else if(message.author.bot && botread === false){return;}
-        else if(message.channel.type === "dm" && dmsend === false){return;};
+        else if(message.channel.type === "dm" && dmsend === false){return;}
+        else if(message.channel.type === "text" && channelsend === false){return;};
 
         if (message.content.startsWith('Forced stop')) {
                 if (!message.author.id === master) return;
@@ -205,7 +207,7 @@ let beforestart = false;
 let beforestart2 = false;
 let dayfase = false;
 let night_vote = false;
-let judgement = false;
+let judgements = false;
 let day_night = false;
 console.log("設定読み込み完了");
 
@@ -242,15 +244,15 @@ function judgement(){
         if(Villagercount = Werewolfcount){
                 startchannel.send("人狼の数と村人の数が同じになったため人狼の勝利です！！");
                 startchannel.send(Result)
-                endbool()
+                endbool();
         }else if(Werewolfcount === 0){
                 startchannel.send("村の中から人狼が消滅したため、村人の勝利です！！");
                 startchannel.send(Result)
-                endbool()
+                endbool();
         }else{
-                judgement = false;
                 day_night = true;
-        }
+                message.channel.send("第" + day + "日目の夜がやってきました\n" + "夜行動を選択してください\n「!ロウ」のように選択してください")
+        };
 
 };
 
@@ -405,8 +407,9 @@ client.on('message', message => {
 
         if(dayfase){
                 day++
+                channelsend = false;
                 dayfase = false;
-                message.channel.send("第" + day + "日目が始まりました。");D
+                message.channel.send("第" + day + "日目が始まりました。");
                 if(day > 1){
                         startchannel.send("先日は人狼によって" + werewolfkill + "が殺されました");
                 };
@@ -431,26 +434,23 @@ client.on('message', message => {
                                 return;
                         };
                         if(Mas === alwaysGetMember.length){
-                                
+                                night_vote = false;
+                                dmsend = false;
                                 let Allcontent = "\n------------------";
                                 for(address of alwaysGetMember){
                                         Allcontent += "\n" + eval(addressListToNameStr(address) + "_member" + ".name") + "：" + eval(addressListToNameStr(address) + "_member" + ".count") + "票";
                                 };
                                 console.log("---------------人物評価完了---------------");
                                 startchannel.send("全員投票完了しました。投票結果を開示します" + Allcontent + "\n------------------");
-                                dmsend = false;
                                 startchannel.send(returnManyVotedName() + "さん\n30秒で遺言をどうぞ");
                                 setTimeout(function(){
-                                        night_vote = false;
                                         botread = true;
                                         startchannel.send("遺言時間終了\nこれ以降死者として不用意な発言はやめてください")
                                         deleteroll(eval(returnManyVotedName() + "_member" + ".address"));
                                         eval(returnManyVotedName() + "_member" + ".deathOrLife" + "= '死亡'");
-                                        judgement = true;
+                                        judgements = true;
                                         botread = false;
-                                        day_night = true;
                                         judgement()
-                                        startchannel.send("続行します\nなにか入力してください。")
                                 },20*1000);
                                 
                         };
@@ -460,7 +460,6 @@ client.on('message', message => {
         };
         
         if(day_night){
-                message.channel.send("第" + day + "日目の夜がやってきました\n" + "夜行動を選択してください\n「!ロウ」のように選択してください")
                 dmsend = true;
                 let endpoint =0;
                 for(w of Werewolf){
@@ -473,6 +472,8 @@ client.on('message', message => {
                 };
                 if(endpoint === Werewolf){
                         dmsend = false;
+                        day_night = false;
+                        dayfase = true;
                         console.log("パーフェクト")
                 };
         };
