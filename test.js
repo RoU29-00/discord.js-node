@@ -133,18 +133,25 @@ function addressListToNameStr(str){
 };
 
 alwaysGetMember = ["812608069128159233","524907316269678622"]
-
-let Result = "----------------------\n";
-                for(m of alwaysGetMember){
-                        let B =addressListToNameStr(m)
-                        let C = eval( String(B) + "_member.address");
-                        let A = eval( String(B) + "_member.name");
-                        Result += A + "：" + C + "\n"
-                        A = eval( String(B) + "_member.roll");
-                        Result += "役職：" + A + "\n"
-                        A = eval( String(B) + "_member.deathOrLife");
-                        Result += "生存判定：" + A + "\n"
+let Werewolf = ["812608069128159233","814890074185007104"]
+let Villager = ["524907316269678622","814826300770484244"]
+let Werewolfcount = 2;
+let Villagercount = 2;
+function deleteroll(address){
+        for(w of Werewolf){
+                if(w === address){
+                        Werewolf.splice(Werewolf.indexOf(address),1)
+                        Werewolfcount--
                 };
-                Result += "----------------------";
+        };
+        for(v of Villager){
+                if(v === address){
+                        Villager.splice(Villager.indexOf(address),1)
+                        Villagercount--
+                };
+        };
 
-console.log(Result)
+};
+
+deleteroll("812608069128159233")
+console.log(Werewolf)
