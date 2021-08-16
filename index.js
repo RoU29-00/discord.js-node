@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
+client.login('ODcwNzE3NzczMzg1NDM3MjU2.YQQ1Hg.6WJWC_7Fw5gDmQ6vCht-yqTa6nw');
+
 //人物定義
 class GetMemberData {
         constructor(address,name,blackOrWhite,roll,count,deathOrLife,rightvote){
@@ -203,11 +205,14 @@ var alwaysGetMember =[];
 var alwaysGetMemberName = [];
 var Werewolfcount =0;
 var Villagercount =0;
+var Seercount = 0;
 var allcount =0;
 var Werewolf =[];
 var Villager =[];
+var Seer = [];
 let setting = 0;
 let day = 0;
+let nightGone = 0;
 let werewolfkill = "";
 
 //スイッチ式if文bool
@@ -242,12 +247,14 @@ function deleteroll(address){
 function resetVote(){
         for(m of alwaysGetMember){
                 if(eval(addressListToNameStr(m) + "_member" + ".deathOrLife") === "死亡"){
-                        return;
-                };
+                        eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
+                }else{
                 eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
                 eval(addressListToNameStr(m) + "_member" + ".rightvote" + "= true");
+                };
         };
 };
+
 
 
 function judgement(){
@@ -342,7 +349,8 @@ client.on('message', message => {
         };
 
         if((String(message.content) === "?登録完了" || String(message.content) === "？登録完了") && rollfase){
-                allcount = Villagercount+Werewolfcount;
+                allcount = Villagercount+Werewolfcount+Seercount;
+                nightGone = Werewolfcount+Seercount
                 if(allcount!== getMember.length){
                         message.channel.send("Error：参加人数と役職人数が一致していません。")
                         return;
@@ -351,7 +359,6 @@ client.on('message', message => {
                 alwaysGetMember = getMember.slice(0,getMember.length);
                 rollfase = false;
                 beforestart =true;
-                rollfaseintro = false;
 
         };
 
@@ -371,6 +378,13 @@ client.on('message', message => {
                         return;
                 };
 
+                if(String(message.content).slice(1,3) === "占い師" ){
+                        Seercount = parseInt(Atoa(String(message.content).slice(3)));
+                        console.log("占い師数："+String(message.content).slice(3) + "設定");
+                        message.channel.send("占い師の人数を"+String(Villagercount)+"に設定しました");
+                        return;
+                };
+
         };
 
         //ゲームフェーズ
@@ -379,6 +393,8 @@ client.on('message', message => {
 
                 console.log("人狼数：" + Werewolfcount);
                 console.log("村人数：" + Villagercount);
+                console.log("占い師数：" + Seercount);
+                
                 //人物役職配布
                 for(let GrobalImpass = 0 ; GrobalImpass<Werewolfcount ; GrobalImpass++){
                         console.log("人狼配布開始");
@@ -389,6 +405,16 @@ client.on('message', message => {
                         console.log(ralco);
                         Werewolf.push(address);
                         console.log("配布：人狼\""+Werewolf+"\"" + "\n------------");
+                }
+                for(let GrobalImpass = 0 ; GrobalImpass<Seercount ; GrobalImpass++){
+                        console.log("占い師配布開始");
+                        let address = randomChoice(getMember)
+                        let ralco = new GetMemberData(address,AddressToName(address),"白","Seer",0,"生存",true);
+                        eval(String(ralco.name) + "_member" + " = " + "ralco");
+                        console.log("------------");
+                        console.log(ralco);
+                        Villager.push(address);
+                        console.log("配布：人狼\""+Seer+"\"" + "\n------------");
                 }
                 for(let GrobalImpass = 0 ; GrobalImpass<Villagercount ; GrobalImpass++){
                         console.log("村人配布開始");
@@ -403,7 +429,10 @@ client.on('message', message => {
                 console.log("----------------配布完了----------------");
                 console.log("人狼：" + Werewolf);
                 console.log("村人：" + Villager);
+                console.log("占い師：" + Seer);
+
                 //DMに対象役職を送信
+
                 for(let i = 0 ; i<allcount ; i++){
                         let ID = client.users.cache.get(alwaysGetMember[i]);
                                 if(Werewolf.indexOf(alwaysGetMember[i]) !== -1){
@@ -420,6 +449,10 @@ client.on('message', message => {
                                 }else if(Villager.indexOf(alwaysGetMember[i]) !== -1){
                                         client.users.cache.get(alwaysGetMember[i]).send("あなたの役職は村人です");
                                         client.users.cache.get(alwaysGetMember[i]).send({ files: ["../discord.js-node/image/村人.png"] });
+                                        console.log(String(ID)+"に送信");
+                                }else if(Seer.indexOf(alwaysGetMember[i]) !== -1){
+                                        client.users.cache.get(alwaysGetMember[i]).send("あなたの役職は占い師です");
+                                        client.users.cache.get(alwaysGetMember[i]).send({ files: ["../discord.js-node/image/占い師.png"] });
                                         console.log(String(ID)+"に送信");
                                 };
 
@@ -480,8 +513,7 @@ client.on('message', message => {
                                 try{
                                         if(eval(String(message.content).slice(1) +"_member" + ".deathOrLife") === "死亡"){
                                                 message.channel.send("死亡者を殺すことはできません");
-                                                return;
-                                        }
+                                        }else{
                                         eval(String(message.content).slice(1)+ "_member" + ".count++")
                                         message.channel.send(String(message.content).slice(1) + "の投票を受付ました。")
                                         eval(addressListToNameStr(m) + "_member" + ".rightvote" + "= false");
@@ -489,9 +521,10 @@ client.on('message', message => {
                                         console.log("人物名：" + eval(String(message.content).slice(1)+ "_member" + ".name") +"に"+ eval(String(message.content).slice(1)+ "_member" + ".count") + "投票されました");
                                         Mas++
                                         console.log("現在："+ Mas +"  目標："+ alwaysGetMember.length)
+                                        };
                                 }catch{
                                         message.channel.send("対象外です")
-                                        return;
+                                        return
                                 };
                         };
                 }else if(eval(addressListToNameStr(message.author.id) + "_member" + ".rightvote" === false)){
@@ -502,7 +535,10 @@ client.on('message', message => {
                         dmsend = false;
                         let Allcontent = "\n------------------";
                         for(address of alwaysGetMember){
+                                if(eval(addressListToNameStr(address) + "_member" + ".deathOrLife") === "死亡"){
+                                }else{
                                 Allcontent += "\n" + eval(addressListToNameStr(address) + "_member" + ".name") + "：" + eval(addressListToNameStr(address) + "_member" + ".count") + "票";
+                                };
                         };
                         console.log("---------------人物評価完了---------------");
                         startchannel.send("全員投票完了しました。投票結果を開示します" + Allcontent + "\n------------------");
@@ -538,19 +574,31 @@ client.on('message', message => {
                                 endpoint++;
                                 werewolfkill = eval(String(message.content).slice(1)+ "_member" + ".name")
                                 deleteroll(eval(String(message.content).slice(1)+ "_member" + ".adress"))
+                        }else if(Seer.indexOf(message.author.id) !== -1){
+                                if(eval(String(message.content).slice(1)+ "_member" + ".deathOrLife") === "死亡"){
+                                        console.log("死亡者選択のため無効化")
+                                        message.channel.send("その人物は既に死んでいます")
+                                        return;
+                                };
+                                message.channel.send("占い相手を受け付けました")
+                                try{
+                                        eval("let Msga =" + String(message.content).slice(1)+ "_member" + ".blackOrWhite")
+                                        message.channel.send("対象：" +String(message.content).slice(1) + "は" + Msga + "です。")
+                                        endpoint++
+                                }catch{
+                                        message.channel.send("対象を認識できませんでした")
+                                        return;
+                                };
                         };
 
-                        if(endpoint === Werewolfcount){
+                        if(endpoint === nightGone){
                                 dmsend = false;
                                 day_night = false;
                                 dayfase = true;
-                                console.log("パーフェクト"+ day)
+                                console.log("夜ターンを終了：day"+ day + "の行動を終了します")
                         };
                 };
         };
 
 });
 };
-
-
-client.login('ODcwNzE3NzczMzg1NDM3MjU2.YQQ1Hg.6WJWC_7Fw5gDmQ6vCht-yqTa6nw');

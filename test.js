@@ -46,13 +46,14 @@ function addressListToName(list){
 };
 
 class GetMemberData {
-        constructor(address,name,blackOrWhite,roll,count,deathOrLife){
+        constructor(address,name,blackOrWhite,roll,count,deathOrLife,rightvote){
                 this.address = address;
                 this.name = name;
                 this.blackOrWhite = blackOrWhite;
                 this.roll = roll;
                 this.count = count;
                 this.deathOrLife = deathOrLife
+                this.rightvote = rightvote
                 
         };
 
@@ -87,11 +88,7 @@ function addressListToName(str){
 };
 
 
-ロウ_member = new GetMemberData("812608069128159233","ロウ","黒","WereWolf",1,"生存")
-しおん_member = new GetMemberData("524907316269678622","しおん","黒","WereWolf",3,"生存")
-Uki_member = new GetMemberData("814890074185007104","Uki","黒","WereWolf",2,"生存")
-miho_member = new GetMemberData("814826300770484244","miho","黒","WereWolf",10,"生存")
-alwaysGetMember = ["812608069128159233","524907316269678622","814890074185007104","814826300770484244"]
+
 function returnManyVotedName(){
         let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"};
         result = "";
@@ -154,11 +151,23 @@ function deleteroll(address){
 
 };
 
-function resetVote(){
-for(m of alwaysGetMember){
-        eval(addressListToNameStr(m) + "_member" + ".count" + " =  0")
-};
-};
+ロウ_member = new GetMemberData("812608069128159233","ロウ","黒","WereWolf",1,"死亡",false)
+しおん_member = new GetMemberData("524907316269678622","しおん","黒","WereWolf",3,"生存",false)
+Uki_member = new GetMemberData("814890074185007104","Uki","黒","WereWolf",2,"生存",false)
+miho_member = new GetMemberData("814826300770484244","miho","黒","WereWolf",10,"生存",false)
+alwaysGetMember = ["812608069128159233","524907316269678622","814890074185007104","814826300770484244"]
 
+
+function resetVote(){
+        for(m of alwaysGetMember){
+                if(eval(addressListToNameStr(m) + "_member" + ".deathOrLife") === "死亡"){
+                        eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
+                }else{
+                eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
+                eval(addressListToNameStr(m) + "_member" + ".rightvote" + "= true");
+                };
+        };
+};
 
 resetVote()
+console.log(ロウ_member,しおん_member,Uki_member,miho_member)
