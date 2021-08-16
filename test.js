@@ -1,13 +1,13 @@
 let testplan = true
 
 function test(){
-    console.log(document.getElementById("test1").value)
+    //console.log(document.getElementById("test1").value)
     B = 12;
     
     if((document.getElementById("test1").value === "test") && (testplan) ){
-        console.log("test in value")
+        //console.log("test in value")
         let subresultnum = Math.floor( Math.random() * 1+1)
-        console.log(subresultnum)
+        //console.log(subresultnum)
     }
 }
 
@@ -91,6 +91,7 @@ function addressListToName(str){
 しおん_member = new GetMemberData("524907316269678622","しおん","黒","WereWolf",3,"生存")
 Uki_member = new GetMemberData("814890074185007104","Uki","黒","WereWolf",2,"生存")
 miho_member = new GetMemberData("814826300770484244","miho","黒","WereWolf",10,"生存")
+alwaysGetMember = ["812608069128159233","524907316269678622","814890074185007104","814826300770484244"]
 function returnManyVotedName(){
         let memberList = {"ロウ":"812608069128159233","しおん":"524907316269678622","Uki":"814890074185007104","miho":"814826300770484244","mint":"812608586710253598","なかま":"838767066198573076","huuya":"620970054170705921","たくあん":"812609175666163723","kaitwo":"812624786534432779","あづき":"812616102282002443","音声用":"842394503104430090"};
         result = "";
@@ -132,7 +133,7 @@ function addressListToNameStr(str){
                 };     
 };
 
-alwaysGetMember = ["812608069128159233","524907316269678622"]
+
 let Werewolf = ["812608069128159233","814890074185007104"]
 let Villager = ["524907316269678622","814826300770484244"]
 let Werewolfcount = 2;
@@ -153,5 +154,11 @@ function deleteroll(address){
 
 };
 
-deleteroll("812608069128159233")
-console.log(Werewolf)
+function resetVote(){
+for(m of alwaysGetMember){
+        eval(addressListToNameStr(m) + "_member" + ".count" + " =  0")
+};
+};
+
+
+resetVote()
