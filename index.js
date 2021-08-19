@@ -6,7 +6,7 @@ client.login('ODcwNzE3NzczMzg1NDM3MjU2.YQQ1Hg.6WJWC_7Fw5gDmQ6vCht-yqTa6nw');
 
 //人物定義
 class GetMemberData {
-        constructor(address,name,blackOrWhite,roll,count,deathOrLife,rightvote){
+        constructor(address,name,blackOrWhite,roll,count,deathOrLife,rightvote,special){
                 this.address = address;
                 this.name = name;
                 this.blackOrWhite = blackOrWhite;
@@ -14,6 +14,7 @@ class GetMemberData {
                 this.count = count;
                 this.deathOrLife = deathOrLife
                 this.rightvote = rightvote
+                this.special = special
                 
         };
 
@@ -249,8 +250,11 @@ function resetVote(){
                 if(eval(addressListToNameStr(m) + "_member" + ".deathOrLife") === "死亡"){
                         eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
                 }else{
-                eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
-                eval(addressListToNameStr(m) + "_member" + ".rightvote" + "= true");
+                        eval(addressListToNameStr(m) + "_member" + ".count" + "=  0");
+                        eval(addressListToNameStr(m) + "_member" + ".rightvote" + "= true");
+                };
+                if(eval(addressListToNameStr(m) + "_member" + ".special") === "No"){
+                        eval(addressListToNameStr(m) + "_member" + ".special" + "= Yes");
                 };
         };
 };
@@ -284,7 +288,7 @@ function judgement(){
                 endbool();
         }else{
                 day_night = true;
-                startchannel.send("第" + day + "日目の夜がやってきました\n" + "夜行動を選択してください\n「!ロウ」のように選択してください")
+                startchannel.send("第" + day + "日目の夜がやってきました\n" + "夜行動を選択してください（村人以外）\n「!ロウ」のように選択してください")
         };
 
 };
@@ -324,20 +328,29 @@ client.on('message', message => {
         };
 
         if((String(message.content).startsWith("!") || String(message.content).startsWith("！")) && startfase ){
-                
                 for (m in memberList){
                         if(m === String(message.content).slice(1)){
-                                getMember.push(memberList[String(message.content).slice(1)]);
-                                message.channel.send("登録完了:"+m)
-                                message.channel.send("現在人数数："+String(getMember.length));
-
-                                console.log(getMember);
-                                //重複を防ぎたい
-                                return;
-                        }
+                                if(getMember.indexOf(memberList[m]) !== -1){
+                                        message.channel.send(String(message.content).slice(1) + "は既に登録されています")
+                                        console.log("重複を判定、中止しました")
+                                        return;
+                                }else if (message.author.id === memberList[m]){
+                                        getMember.push(memberList[String(message.content).slice(1)]);
+                                        message.channel.send("登録完了:"+m)
+                                        message.channel.send("現在人数数："+String(getMember.length));
+        
+                                        console.log(getMember);
+                                        return;  
+                                }else{
+                                        message.channel.send("本人の発言のみ登録可能です");
+                                        console.log("DIDとMIDが一致しませんでした")
+                                        return;
+                                };
+                        };
                 };
                 message.channel.send("人物："+String(message.content).slice(1)+"の認証ができませんでした");
-                                return;
+                                        console.log("人物登録されていません")
+                                        return;
         };
 
         
@@ -371,17 +384,17 @@ client.on('message', message => {
                         return;   
                 }
 
-                if (String(message.content).slice(1,3) === "村人" ){
+                if(String(message.content).slice(1,3) === "村人" ){
                         Villagercount = parseInt(Atoa(String(message.content).slice(3)));
                         console.log("村人数："+String(message.content).slice(3) + "設定");
                         message.channel.send("村人の人数を"+String(Villagercount)+"に設定しました");
                         return;
                 };
 
-                if(String(message.content).slice(1,3) === "占い師" ){
-                        Seercount = parseInt(Atoa(String(message.content).slice(3)));
-                        console.log("占い師数："+String(message.content).slice(3) + "設定");
-                        message.channel.send("占い師の人数を"+String(Villagercount)+"に設定しました");
+                if(String(message.content).slice(1,4) === "占い師" ){
+                        Seercount = parseInt(Atoa(String(message.content).slice(4)));
+                        console.log("占い師数："+String(message.content).slice(4) + "設定");
+                        message.channel.send("占い師の人数を"+String(Seercount)+"に設定しました");
                         return;
                 };
 
@@ -399,7 +412,7 @@ client.on('message', message => {
                 for(let GrobalImpass = 0 ; GrobalImpass<Werewolfcount ; GrobalImpass++){
                         console.log("人狼配布開始");
                         let address = randomChoice(getMember);
-                        let ralco = new GetMemberData(address,AddressToName(address),"黒","Werewolf",0,"生存",true);
+                        let ralco = new GetMemberData(address,AddressToName(address),"黒","Werewolf",0,"生存",true,"Yes");
                         eval(String(ralco.name) + "_member" + " = " + "ralco");
                         console.log("------------");
                         console.log(ralco);
@@ -409,17 +422,17 @@ client.on('message', message => {
                 for(let GrobalImpass = 0 ; GrobalImpass<Seercount ; GrobalImpass++){
                         console.log("占い師配布開始");
                         let address = randomChoice(getMember)
-                        let ralco = new GetMemberData(address,AddressToName(address),"白","Seer",0,"生存",true);
+                        let ralco = new GetMemberData(address,AddressToName(address),"白","Seer",0,"生存",true,"Yes");
                         eval(String(ralco.name) + "_member" + " = " + "ralco");
                         console.log("------------");
                         console.log(ralco);
-                        Villager.push(address);
-                        console.log("配布：人狼\""+Seer+"\"" + "\n------------");
+                        Seer.push(address);
+                        console.log("配布：占い師\""+Seer+"\"" + "\n------------");
                 }
                 for(let GrobalImpass = 0 ; GrobalImpass<Villagercount ; GrobalImpass++){
                         console.log("村人配布開始");
                         let address = randomChoice(getMember)
-                        let ralco = new GetMemberData(address,AddressToName(address),"白","Villager",0,"生存",true);
+                        let ralco = new GetMemberData(address,AddressToName(address),"白","Villager",0,"生存",true,"None");
                         eval(String(ralco.name) + "_member" + " = " + "ralco");
                         console.log("------------");
                         console.log(ralco);
@@ -465,8 +478,10 @@ client.on('message', message => {
                                 };
                         };
                 };
+
+                let Comment ="設定項目\n--------------------------\n人狼数："+Werewolfcount+"人"+"\n村人数："+Villagercount+"人"+ "\n占い師数：" + Seercount + "人" + "\n参加メンバー："+String(getMember.length)+"人\n討論時間：5分" + "\n" + Mrg + "\n" + "通信プロトコル状態：true\n--------------------------";
                 message.channel.send("参加メンバー全員にそれぞれの役職を送信しました\nこれより下記設定で人狼を開始します\n準備が完了した場合、「!はい」と入力してください。\n「!いいえ」と入力すると一度人狼プログラムが閉じ\n最初からやり直すことができます");
-                message.channel.send("設定項目\n--------------------------\n人狼数："+Werewolfcount+"人"+"\n村人数："+Villagercount+"人"+"\n参加メンバー："+String(getMember.length)+"人\n討論時間：5分" + "\n" + Mrg + "\n" + "通信プロトコル状態：true\n--------------------------");
+                message.channel.send(Comment);
 
                 beforestart = false;
                 beforestart2 = true;
@@ -569,11 +584,14 @@ client.on('message', message => {
                                         message.channel.send("その人物は既に死んでいます")
                                         return;
                                 };
-                                eval(String(message.content).slice(1)+ "_member" + ".deathOrLife" + " = " + "'死亡'")
                                 message.channel.send("死亡選択を受け付けました")
                                 endpoint++;
                                 werewolfkill = eval(String(message.content).slice(1)+ "_member" + ".name")
+                                eval(addressListToNameStr(message.author.id) + "_member" + ".special" + "= No")
+                                console.log("人狼：" + addressListToNameStr(message.author.id) + "は殺す相手を\n人物：" + werewolfkill + "を選択しました") 
+                                //処理（騎士実装時に変更）
                                 deleteroll(eval(String(message.content).slice(1)+ "_member" + ".adress"))
+                                eval(String(message.content).slice(1)+ "_member" + ".deathOrLife" + " = " + "'死亡'")
                         }else if(Seer.indexOf(message.author.id) !== -1){
                                 if(eval(String(message.content).slice(1)+ "_member" + ".deathOrLife") === "死亡"){
                                         console.log("死亡者選択のため無効化")
@@ -583,7 +601,9 @@ client.on('message', message => {
                                 message.channel.send("占い相手を受け付けました")
                                 try{
                                         eval("let Msga =" + String(message.content).slice(1)+ "_member" + ".blackOrWhite")
-                                        message.channel.send("対象：" +String(message.content).slice(1) + "は" + Msga + "です。")
+                                        message.channel.send("対象：" + String(message.content).slice(1) + "は" + Msga + "です。")
+                                        console.log("占い師：" + addressListToNameStr(message.author.id) + "は占い相手を\n人物：" + String(message.content).slice(1) + "を選択しました" )
+                                        eval(addressListToNameStr(message.author.id) + "_member" + ".special" + "= No")
                                         endpoint++
                                 }catch{
                                         message.channel.send("対象を認識できませんでした")
