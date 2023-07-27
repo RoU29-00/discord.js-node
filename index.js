@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
-client.login('ODcwNzE3NzczMzg1NDM3MjU2.YQQ1Hg.6WJWC_7Fw5gDmQ6vCht-yqTa6nw');
+client.login('rdkjae4kufkfsdiklunrebtrekjthmpbgieroiunpbortreiotebr');
 
 
 
